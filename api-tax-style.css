@@ -1,0 +1,229 @@
+ /* Custom styles for pagination links */
+.api-data-pagination {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#api-data-table th:nth-child(1),
+    #api-data-table td:nth-child(1) {
+        display: none;
+    }
+
+.search-and-filter {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: no-wrap; /* Allow elements to wrap to the next line */
+}
+
+#api-data-search,
+#api-data-filter,
+#api-data-filter-namayande {
+    width: 30%; /* Set the width to 100% to force it to the next line */
+    margin-bottom: 5px; /* Add some space between elements */
+}
+/* Style for even rows */
+#api-data-table tbody tr:nth-child(even) {
+    background-color: #EDF1F2; /* Gray background color for even rows */
+}
+
+/* Style for odd rows */
+#api-data-table tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* White background color for odd rows */
+}
+
+/* Pagination styles */
+.api-data-pagination li {
+    margin: 0 5px;
+}
+
+.api-data-pagination li a,
+.api-data-pagination li span {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #f2f2f2;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.api-data-pagination li a.active,
+.api-data-pagination li a:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+}
+
+#api-data-table .shenaseh {
+    color: #5DB6C7;
+}
+
+th {
+    font-size: 12px; /* Adjust the font size as needed */
+    padding: 8px;
+    color: #333;
+    text-align: center; /* Center align the text in table headers */
+}
+
+th.shenaseh {
+    color: #5DB6C7;
+}
+
+/* Reduce font size for the table data */
+td {
+    max-width: 100%;
+    font-size: 13px; /* Adjust the font size as needed */
+    padding: 5px 10px;
+    text-align: center; /* Center align the text in table data */
+}
+td.date-column {
+padding:20px!important;    }
+/* Add styles for the search and filter elements */
+.search-and-filter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+#api-data-table tbody td:nth-child(4) {
+    /* Apply your desired padding */
+   padding-left: 10px!important;
+    padding-right: 10px!important;
+      white-space: nowrap;
+  padding-top: 7px!important;
+}
+
+
+
+}
+#api-data-search,
+#api-data-filter {
+    width: 45%;
+}
+
+/* Enable horizontal scrolling for the table on smaller screens */
+.table-container {
+    overflow-x: auto;
+}
+
+/* Button styles */
+.glass-morphism-button {
+    background: #5FB3CA; /* Change the background color to #5FB3CA */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 10px 10px 20px rgba(31, 38, 135, 0.1),
+        -10px -10px 20px rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.glass-morphism-button:hover {
+    background: #62c7e0; /* Change the background color on hover */
+    box-shadow: 5px 5px 10px rgba(31, 38, 135, 0.1),
+        -5px -5px 10px rgba(255, 255, 255, 0.25);
+}
+
+.glass-morphism-button:focus {
+    outline: none;
+}
+.table-details {
+    display: none;
+}
+
+.details-content {
+    border-top: 1px solid #ddd;
+    padding: 10px;
+}
+
+.details-content p {
+    margin: 0;
+    padding: 5px 0;
+}
+
+/* Style the accordion button */
+.table-row.expandable .shenaseh::after {
+    content: "+";
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.table-row.expanded .shenaseh::after {
+    content: "-";
+}
+/* Adjust styles for smaller screens using media queries */
+@media screen and (max-width: 768px) {
+    table {
+        font-size: 10px; /* Adjust font size for smaller screens */
+    }
+
+    th,
+    td {
+        padding: 4px 6px; /* Adjust cell padding for smaller screens */
+    }
+  .search-and-filter {
+     display: block!important;
+ }
+  #api-data-search, #api-data-filter, #api-data-filter-namayande {
+     width: 100%!important;
+    margin-bottom: 5px;
+}
+.table-container {
+    overflow-x: auto;
+}
+    /* Display table rows as blocks on smaller screens */
+    #api-data-table tbody,
+    #api-data-table tr,
+    #api-data-table td {
+        display: block;
+    }#api-data-table tbody td:nth-child(4) {
+    /* Apply your desired padding */
+   padding-left: 0px!important;
+padding-right: 54px!important;   padding-top: 0px!important;
+text-align:right!important;}
+
+    /* Style each table row on smaller screens */
+    #api-data-table tbody tr {
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+      text-align:center!important;
+    }
+
+    /* Style each table cell on smaller screens */
+    #api-data-table tbody td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+    }
+ #api-data-search,
+    #api-data-filter {
+        width: 100%; /* Set the width to 100% for mobile devices */
+    }
+
+    /* Display table rows as blocks on smaller screens */
+    #api-data-table tbody,
+    #api-data-table tr,
+    #api-data-table td {
+        display: block;
+    }
+    /* Add a pseudo-element to display table headers as labels on smaller screens */
+    #api-data-table tbody td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-right: 5px;
+        font-weight: bold;
+        text-align: left;
+    }
+}
