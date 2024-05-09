@@ -33,19 +33,153 @@ function excel_upload_admin_page() {
     echo '<div style="border: 1px solid #ccc; border-radius: 5px; width: 50%; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin: auto; margin-top:3rem; text-align:center;">
             <form action="" method="post" enctype="multipart/form-data" style="margin-top: 20px;">
                 <p style="margin-bottom: 10px;">بارگذاری فایل اکسل :</p>
-                <input type="file" name="excel_file" id="excel_file" style="margin-bottom: 10px;">
+                 <input type="file" name="csv_file" id="csv_file" style="margin-bottom: 10px;">
 				</br>
                 <input type="submit" name="upload" value="بارگذاری" style="margin: auto;   background-color: red; border-radius:6px;box-shaddow:1px 1px black; width:35%; color: #fff; border: none; padding: 8px 16px; cursor: pointer;">
             </form>
           </div>';
           
     if(isset($_POST['upload'])) {
-        delete_existing_records(); // Delete existing records
+        // delete_existing_records(); // Delete existing records
         handle_excel_upload(); // Insert new records
     }
 }
 
+function handle_excel_upload() {
+    $uploaded_file = $_FILES['csv_file'];
+    $file_path = $uploaded_file['tmp_name'];
+    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file_path);
+    $worksheet = $spreadsheet->getActiveSheet();
+    $rows = $worksheet->toArray();
 
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'modi_farzad2';
+
+    // Increase PHP memory limit if needed
+    ini_set('memory_limit', '512M');
+
+    // Disable autocommit and keys for better performance
+    $wpdb->query('SET autocommit = 0');
+    $wpdb->query("ALTER TABLE $table_name DISABLE KEYS");
+
+    $batch_size = 1000; // Number of rows to process in each batch
+    $total_rows = count($rows);
+
+    for ($i = 0; $i < $total_rows; $i += $batch_size) {
+        $batch_rows = array_slice($rows, $i, $batch_size);
+
+        // Start a transaction for each batch
+        $wpdb->query('START TRANSACTION');
+
+        foreach ($batch_rows as $index => $row) {
+            if ($index == 0) continue; // Skip header
+
+            $normalized_onvan_kala = Normalizer::normalize($row[2], Normalizer::FORM_C);
+            $cd = $row[0]; // Assuming the 'cd' value is in the first column
+
+            // Check if a row with the same 'cd' value exists
+            $existing_row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE cd = %d", $cd), ARRAY_A);
+
+            if ($existing_row) {
+                // Row with the same 'cd' value exists, update the row
+                $update_query = $wpdb->prepare("UPDATE $table_name SET tp = %s, dt = %s, tt = %s, rt = %s, ds = %s WHERE cd = %d", $row[1], $row[2], $row[6], $row[8], $row[9], $cd);
+                $update_result = $wpdb->query($update_query);
+
+                if ($update_result === false) {
+                    // Log error if update fails
+                    error_log('Error updating data: ' . $wpdb->last_error);
+                }
+            } else {
+                // Row with the same 'cd' value doesn't exist, insert a new row
+                $insert_query = $wpdb->prepare("INSERT INTO $table_name (cd, tp, dt, tt, rt, ds) VALUES (%d, %s, %s, %s, %s, %s)", $row[0], $row[1], $row[2], $row[6], $row[8], $row[9]);
+                $insert_result = $wpdb->query($insert_query);
+
+                if ($insert_result === false) {
+                    // Log error if insert fails
+                    error_log('Error inserting data: ' . $wpdb->last_error);
+                }
+            }
+        }
+
+        // Commit the transaction for the current batch
+        $wpdb->query('COMMIT');
+
+        // Flush buffers to free up memory
+        $wpdb->flush();
+    }
+
+    // Enable keys after all batches are processed
+    $wpdb->query("ALTER TABLE $table_name ENABLE KEYS");
+
+    echo "Data Uploaded Successfully!";
+}
+// function handle_excel_upload() {
+//     $uploaded_file = $_FILES['csv_file'];
+//     $file_path = $uploaded_file['tmp_name'];
+
+//     $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file_path);
+//     $worksheet = $spreadsheet->getActiveSheet();
+//     $rows = $worksheet->toArray();
+
+//     global $wpdb;
+//     $table_name = $wpdb->prefix . 'modi_farzad2';
+
+//     foreach($rows as $index => $row) {
+//         if($index == 0) continue; // Skip header
+//         $normalized_onvan_kala = Normalizer::normalize($row[2], Normalizer::FORM_C);
+
+//         $insert_result = $wpdb->insert($table_name, array(
+//             'cd' => $row[0],
+//             'tp' => $row[1],
+//             'dt' => $row[2],
+//             'tt' => $row[6],
+//             'rt' => $row[8],
+//             'ds' => $row[9],
+//         ));
+
+//         if ($insert_result === false) {
+//             // Log error if insert fails
+//             error_log('Error inserting data: ' . $wpdb->last_error);
+//         }
+//     }
+
+//     // Check if there were any errors during insert
+//     if ($wpdb->last_error) {
+//         // Log any last errors after the loop
+//         error_log('Last error after loop: ' . $wpdb->last_error);
+//     }
+
+//     echo "Data Uploaded Successfully!";
+// }
+
+
+// function handle_excel_upload() {
+//     $uploaded_file = $_FILES['csv_file'];
+//     $file_path = $uploaded_file['tmp_name'];
+
+//     $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file_path);
+//     $worksheet = $spreadsheet->getActiveSheet();
+//     $rows = $worksheet->toArray();
+
+//     global $wpdb;
+//     $table_name = $wpdb->prefix . 'modi_farzad2';
+
+//     foreach($rows as $index => $row) {
+//         if($index == 0) continue; // Skip header
+// $normalized_onvan_kala = Normalizer::normalize($row[2], Normalizer::FORM_C);
+
+//         $wpdb->insert($table_name, array(
+//             'cd' => $row[0],
+//             'tp' => $row[1],
+//             'dt' => $row[2],
+//             'tt' => $row[6],
+//             'rt ' => $row[8],
+//             'ds' => $row[9],
+//           ));
+//     }
+
+//     echo "Data Uploaded Successfully!";
+// }
 
 
 // excel updated
@@ -97,7 +231,7 @@ function fetch_api_data()
     // Fetch data from the API
     //  $url = 'https://api.mega-pay.ir/api/stuffid/query?page=12&items_per_page=100000';
     // $url = 'https://api.mega-pay.ir/api/stuffid/query?page=22&items_per_page=100000';
-    $url = 'https://api.mega-pay.ir/api/stuffid/query?page=9&items_per_page=100000';
+    $url = 'https://api.mega-pay.ir/api/stuffid/query?page=9&items_per_page=1';
      //   $url = 'https://mandegaracc.ir/new/formatted_output2.json';
 
     $response = wp_remote_get($url, array('timeout' => $timeout));
