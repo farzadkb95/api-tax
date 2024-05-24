@@ -79,6 +79,7 @@ function handle_excel_upload() {
 
             // Check if a row with the same 'cd' value exists
             $existing_row = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE cd = %d", $cd), ARRAY_A);
+            // $existing_row = false;
 
             if ($existing_row) {
                 // Row with the same 'cd' value exists, update the row
@@ -91,7 +92,7 @@ function handle_excel_upload() {
                 }
             } else {
                 // Row with the same 'cd' value doesn't exist, insert a new row
-                $insert_query = $wpdb->prepare("INSERT INTO $table_name (cd, tp, dt, tt, rt, ds) VALUES (%d, %s, %s, %s, %s, %s)", $row[0], $row[1], $row[2], $row[6], $row[8], $row[9]);
+                $insert_query = $wpdb->prepare("INSERT INTO $table_name (cd, tp, dt, tt, rt, ds) VALUES (%d, %s, %s, %s, %s, %s)", $row[0], $row[1], $row[3], $row[6], $row[8], $row[9]);
                 $insert_result = $wpdb->query($insert_query);
 
                 if ($insert_result === false) {
